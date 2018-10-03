@@ -38,6 +38,17 @@ public class SemanticCommitParserTest {
     }
 
     @Test
+    public void shouldAttributeRevertCommitsToScopeOfRevertedCommit_lowerCase() {
+        SemanticCommit commit = SemanticCommitParser.parse(
+            "revert \"feat(sprockets): Replace widgets with sprockets\""
+        );
+
+        assertThat(commit.type, is("revert"));
+        assertThat(commit.scope, is("sprockets"));
+    }
+
+
+    @Test
     public void shouldAttributeReapplyCommitsToScopeOfReappliedCommit() {
         SemanticCommit commit = SemanticCommitParser.parse(
             "Reapply \"feat(sprockets): Replace widgets with sprockets\""
@@ -46,6 +57,17 @@ public class SemanticCommitParserTest {
         assertThat(commit.type, is("reapply"));
         assertThat(commit.scope, is("sprockets"));
     }
+
+    @Test
+    public void shouldAttributeReapplyCommitsToScopeOfReappliedCommit_lowerCase() {
+        SemanticCommit commit = SemanticCommitParser.parse(
+            "reapply \"feat(sprockets): Replace widgets with sprockets\""
+        );
+
+        assertThat(commit.type, is("reapply"));
+        assertThat(commit.scope, is("sprockets"));
+    }
+
 
     @Test
     public void shouldReduceTypeToLowerCase() {
@@ -64,6 +86,26 @@ public class SemanticCommitParserTest {
         );
 
         assertThat(commit.type, is("unknown"));
+        assertThat(commit.scope, is(nullValue()));
+    }
+
+    @Test
+    public void shouldAttributeMergeCommits() {
+        SemanticCommit commit = SemanticCommitParser.parse(
+                "Merge branch 'master'"
+        );
+
+        assertThat(commit.type, is("merge"));
+        assertThat(commit.scope, is(nullValue()));
+    }
+
+    @Test
+    public void shouldAttributeMergeCommits_lowerCase() {
+        SemanticCommit commit = SemanticCommitParser.parse(
+                "merge branch 'master'"
+        );
+
+        assertThat(commit.type, is("merge"));
         assertThat(commit.scope, is(nullValue()));
     }
 

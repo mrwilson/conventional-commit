@@ -24,10 +24,12 @@ class SemanticCommitParser {
     }
 
     private static String identifyType(String input, Matcher matcher) {
-        if (input.startsWith("Revert")) {
+        if (input.toLowerCase().startsWith("revert")) {
             return "revert";
-        } else if (input.startsWith("Reapply")) {
+        } else if (input.toLowerCase().startsWith("reapply")) {
             return "reapply";
+        } else if (input.toLowerCase().startsWith("merge branch")) {
+            return "merge";
         } else {
             return matcher.group(1).toLowerCase();
         }
