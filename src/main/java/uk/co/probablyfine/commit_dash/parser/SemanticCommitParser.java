@@ -13,7 +13,7 @@ class SemanticCommitParser {
 
         if (matcher.find()) {
             return new SemanticCommit(
-                identifyType(input, matcher),
+                identifyType(input, matcher).trim(),
                 matcher.group(2)
             );
         } else {

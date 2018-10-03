@@ -109,4 +109,14 @@ public class SemanticCommitParserTest {
         assertThat(commit.scope, is(nullValue()));
     }
 
+    @Test
+    public void shouldTrimTrailingWhitespaceFromCommitType() {
+        SemanticCommit commit = SemanticCommitParser.parse(
+                "feat : Lint whitespace"
+        );
+
+        assertThat(commit.type, is("feat"));
+    }
+
+
 }
