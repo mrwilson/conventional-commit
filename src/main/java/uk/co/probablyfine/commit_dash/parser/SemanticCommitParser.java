@@ -16,6 +16,8 @@ class SemanticCommitParser {
                 identifyType(input, matcher).trim(),
                 matcher.group(2)
             );
+        } else if (input.toLowerCase().startsWith("merge branch")) {
+            return new SemanticCommit("merge", null);
         } else {
             return new SemanticCommit("unknown", null);
         }
@@ -28,8 +30,6 @@ class SemanticCommitParser {
             return "revert";
         } else if (input.toLowerCase().startsWith("reapply")) {
             return "reapply";
-        } else if (input.toLowerCase().startsWith("merge branch")) {
-            return "merge";
         } else {
             return matcher.group(1).toLowerCase();
         }
