@@ -3,23 +3,23 @@ package uk.co.probablyfine.commit_dash.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class SemanticCommitParser {
+class ConventionalCommitParser {
 
     private static Pattern pattern = Pattern.compile("(?:Revert \"|Reapply \")?(.*?)(?:\\((.*)\\))?:.*");
 
-    static SemanticCommit parse(String input) {
+    static ConventionalCommit parse(String input) {
 
         final Matcher matcher = pattern.matcher(input);
 
         if (matcher.find()) {
-            return new SemanticCommit(
+            return new ConventionalCommit(
                 identifyType(input, matcher).trim(),
                 matcher.group(2)
             );
         } else if (input.toLowerCase().startsWith("merge branch")) {
-            return new SemanticCommit("merge", null);
+            return new ConventionalCommit("merge", null);
         } else {
-            return new SemanticCommit("unknown", null);
+            return new ConventionalCommit("unknown", null);
         }
 
 

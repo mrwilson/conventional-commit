@@ -6,11 +6,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class SemanticCommitParserTest {
+public class ConventionalCommitParserTest {
 
     @Test
     public void shouldExtractCommitType_noScope() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "fix: Widgets are broken"
         );
 
@@ -19,7 +19,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldExtractCommitType_withScope() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "chore(widget): Update dependencies for Widget"
         );
 
@@ -29,7 +29,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldAttributeRevertCommitsToScopeOfRevertedCommit() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "Revert \"feat(sprockets): Replace widgets with sprockets\""
         );
 
@@ -39,7 +39,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldAttributeRevertCommitsToScopeOfRevertedCommit_lowerCase() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "revert \"feat(sprockets): Replace widgets with sprockets\""
         );
 
@@ -50,7 +50,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldAttributeReapplyCommitsToScopeOfReappliedCommit() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "Reapply \"feat(sprockets): Replace widgets with sprockets\""
         );
 
@@ -60,7 +60,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldAttributeReapplyCommitsToScopeOfReappliedCommit_lowerCase() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "reapply \"feat(sprockets): Replace widgets with sprockets\""
         );
 
@@ -71,7 +71,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldReduceTypeToLowerCase() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "Docs(sprockets): Document new sprocket integration"
         );
 
@@ -81,7 +81,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldReturnUnknownTypeIfUnableToParseCommit() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
             "We're rebuilding this to make use of a WidgetFramework."
         );
 
@@ -91,7 +91,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldAttributeMergeCommits() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
                 "Merge branch 'master'"
         );
 
@@ -101,7 +101,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldAttributeMergeCommits_lowerCase() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
                 "merge branch 'master'"
         );
 
@@ -111,7 +111,7 @@ public class SemanticCommitParserTest {
 
     @Test
     public void shouldTrimTrailingWhitespaceFromCommitType() {
-        SemanticCommit commit = SemanticCommitParser.parse(
+        ConventionalCommit commit = ConventionalCommitParser.parse(
                 "feat : Lint whitespace"
         );
 
