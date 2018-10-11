@@ -2,11 +2,9 @@ package uk.co.probablyfine.conventional_commit.parser;
 
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
-import org.parboiled.annotations.BuildParseTree;
 
 import static uk.co.probablyfine.conventional_commit.parser.CommitBuilder.builder;
 
-@BuildParseTree
 public class SpecImplementingParser extends BaseParser<CommitBuilder> {
 
     public Rule Commit() {

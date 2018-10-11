@@ -18,7 +18,7 @@ public class ConventionalCommit {
         final ParsingResult<CommitBuilder> result = parser.run(input);
 
         if (result.matched) {
-            return Optional.of(result.parseTreeRoot.getValue().build());
+            return Optional.of(result.valueStack.pop().build());
         } else {
             return Optional.empty();
         }
