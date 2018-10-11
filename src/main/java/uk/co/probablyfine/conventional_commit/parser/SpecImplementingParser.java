@@ -14,7 +14,10 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
             Type(),
             Optional(Scope()),
             Delimiter(),
-            OneOrMore(ANY)
+            Sequence(
+                NoneOf(" "),
+                ZeroOrMore(ANY)
+            )
         );
     }
 

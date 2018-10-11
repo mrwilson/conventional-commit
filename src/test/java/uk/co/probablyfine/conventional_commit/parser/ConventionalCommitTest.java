@@ -61,6 +61,14 @@ public class ConventionalCommitTest {
         assertFalse(commit.isPresent());
     }
 
+    @Test
+    public void shouldNotParseCommitsWithNoDescriptionAndTrailingWhitespace() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+                "feat(foo):  "
+        );
+
+        assertFalse(commit.isPresent());
+    }
 
     private Matcher<Optional<Commit>> hasType(String type) {
         return hasAttribute(commit -> commit.type, type);
