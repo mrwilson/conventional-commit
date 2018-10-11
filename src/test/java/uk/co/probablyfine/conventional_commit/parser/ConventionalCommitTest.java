@@ -1,60 +1,83 @@
 package uk.co.probablyfine.conventional_commit.parser;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class ConventionalCommitTest {
 
     @Test
     public void shouldExtractCommitType_noScope() {
-        Commit commit = ConventionalCommit.parse(
+        Optional<Commit> commit = ConventionalCommit.parse(
             "fix: Widgets are broken"
         );
 
-        assertThat(commit.type, is("fix"));
-        assertThat(commit.scope, is(nullValue()));
+        assertThat(commit, hasType("fix"));
+        assertThat(commit, hasScope(null));
     }
 
     @Test
     public void shouldExtractCommitType_withScope() {
-        Commit commit = ConventionalCommit.parse(
+        Optional<Commit> commit = ConventionalCommit.parse(
             "chore(widget): Update dependencies for Widget"
         );
 
-        assertThat(commit.type, is("chore"));
-        assertThat(commit.scope, is("widget"));
+        assertThat(commit, hasType("chore"));
+        assertThat(commit, hasScope("widget"));
     }
 
     @Test
-    public void shouldReduceTypeToLowerCase() {
-        Commit commit = ConventionalCommit.parse(
-            "Docs(sprockets): Document new sprocket integration"
-        );
-
-        assertThat(commit.type, is("Docs"));
-        assertThat(commit.scope, is("sprockets"));
-    }
-
-    @Test
-    public void shouldReturnUnknownTypeIfUnableToParseCommit() {
-        Commit commit = ConventionalCommit.parse(
+    public void shouldReturnEmptyOptionalIfUnableToParse() {
+        Optional<Commit> commit = ConventionalCommit.parse(
             "We're rebuilding this to make use of a WidgetFramework."
         );
 
-        assertThat(commit.type, is("unknown"));
-        assertThat(commit.scope, is(nullValue()));
+        assertFalse(commit.isPresent());
     }
 
     @Test
     public void shouldNotParseCommitsWithExtraWhitespace() {
-        Commit commit = ConventionalCommit.parse(
-                "feat : Lint whitespace"
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "feat : Lint whitespace"
         );
 
-        assertThat(commit.type, is("unknown"));
-        assertThat(commit.scope, is(nullValue()));
+        assertFalse(commit.isPresent());
     }
+
+    private Matcher<Optional<Commit>> hasType(String type) {
+        return hasAttribute(commit -> commit.type, type);
+    }
+
+    private Matcher<Optional<Commit>> hasScope(String scope) {
+        return hasAttribute(commit -> commit.scope, scope);
+    }
+
+    private <T> Matcher<Optional<Commit>> hasAttribute(Function<Commit, T> attribute, T value) {
+        return new TypeSafeMatcher<Optional<Commit>>() {
+            @Override
+            protected boolean matchesSafely(Optional<Commit> commit) {
+                return commit.isPresent() && Objects.equals(value, attribute.apply(commit.get()));
+            }
+
+            @Override
+            protected void describeMismatchSafely(Optional<Commit> foo, Description description) {
+                description.appendText("was ").appendValue(foo);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Commit with ").appendValue(value);
+            }
+        };
+    }
+
+
 }
