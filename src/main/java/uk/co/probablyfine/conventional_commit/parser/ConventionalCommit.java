@@ -8,13 +8,13 @@ import java.util.Optional;
 
 import static org.parboiled.Parboiled.createParser;
 
-class ConventionalCommit {
+public class ConventionalCommit {
 
     private static ParseRunner<CommitBuilder> parser = new BasicParseRunner<>(
         createParser(SpecImplementingParser.class).Commit()
     );
 
-    static Optional<Commit> parse(String input) {
+    public static Optional<Commit> parse(String input) {
         final ParsingResult<CommitBuilder> result = parser.run(input);
 
         if (result.matched) {

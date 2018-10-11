@@ -1,10 +1,10 @@
 package uk.co.probablyfine.conventional_commit.parser;
 
-class Commit {
-    String type;
-    String scope;
-    String description;
-    String body;
+public class Commit {
+    public final String type;
+    public final String scope;
+    public final String description;
+    public final String body;
 
     Commit(String type, String scope, String description, String body) {
         this.type = type;
