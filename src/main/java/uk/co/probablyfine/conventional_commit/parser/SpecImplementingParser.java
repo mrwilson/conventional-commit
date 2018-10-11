@@ -14,8 +14,24 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
             Type(),
             Optional(Scope()),
             Delimiter(),
-            Description()
+            Description(),
+            Optional(Body()),
+            EOI
         );
+    }
+
+    Rule Body() {
+        return Sequence(
+            NewLine(), NewLine(),
+            OneOrMore(
+                ANY
+            ),
+            push(pop().body(match()))
+        );
+    }
+
+    Rule NewLine() {
+        return Ch('\n');
     }
 
     Rule Type() {
@@ -44,7 +60,9 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
         return Sequence(
             Sequence(
                 NoneOf(" "),
-                ZeroOrMore(ANY)
+                ZeroOrMore(
+                    NoneOf("\n")
+                )
             ),
             push(pop().description(match()))
         );

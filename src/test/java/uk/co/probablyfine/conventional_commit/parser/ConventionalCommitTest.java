@@ -53,6 +53,33 @@ public class ConventionalCommitTest {
     }
 
     @Test
+    public void shouldExtractBodyFromCommit() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "fix(widget): Widgets are broken\n\nThis was due to the wotsit being old and rusty"
+        );
+
+        assertThat(commit, hasBody("This was due to the wotsit being old and rusty"));
+    }
+
+    @Test
+    public void shouldExtractMultiLineBodyFromCommit() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "fix(widget): Widgets are still broken\n\nReplacement wotsit was faulty\nUsing new brand"
+        );
+
+        assertThat(commit, hasBody("Replacement wotsit was faulty\nUsing new brand"));
+    }
+
+    @Test
+    public void shouldExtractBodyFromCommit_RequireNewLineSeparator() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "fix(widget): Widgets are broken\nThis was due to the wotsit being old and rusty"
+        );
+
+        assertFalse(commit.isPresent());
+    }
+
+    @Test
     public void shouldReturnEmptyOptionalIfUnableToParse() {
         Optional<Commit> commit = ConventionalCommit.parse(
             "We're rebuilding this to make use of a WidgetFramework."
@@ -98,6 +125,10 @@ public class ConventionalCommitTest {
 
     private Matcher<Optional<Commit>> hasDescription(String description) {
         return hasAttribute(commit -> commit.description, description);
+    }
+
+    private Matcher<Optional<Commit>> hasBody(String body) {
+        return hasAttribute(commit -> commit.body, body);
     }
 
     private <T> Matcher<Optional<Commit>> hasAttribute(Function<Commit, T> attribute, T value) {
