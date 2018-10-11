@@ -1,4 +1,4 @@
-package uk.co.probablyfine.commit_dash.parser;
+package uk.co.probablyfine.conventional_commit.parser;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package uk.co.probablyfine.commit_dash.parser;
+package uk.co.probablyfine.conventional_commit.parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
