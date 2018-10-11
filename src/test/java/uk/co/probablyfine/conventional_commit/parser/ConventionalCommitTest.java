@@ -30,8 +30,26 @@ public class ConventionalCommitTest {
             "chore(widget): Update dependencies for Widget"
         );
 
-        assertThat(commit, hasType("chore"));
-        assertThat(commit, hasScope("widget"));
+         assertThat(commit, hasType("chore"));
+         assertThat(commit, hasScope("widget"));
+    }
+
+    @Test
+    public void shouldExtractCommitDescription() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "fix: Widgets are broken"
+        );
+
+        assertThat(commit, hasDescription("Widgets are broken"));
+    }
+
+    @Test
+    public void shouldExtractCommitDescription_WithScope() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+                "fix(widget): Widgets are broken"
+        );
+
+        assertThat(commit, hasDescription("Widgets are broken"));
     }
 
     @Test
@@ -78,6 +96,10 @@ public class ConventionalCommitTest {
         return hasAttribute(commit -> commit.scope, scope);
     }
 
+    private Matcher<Optional<Commit>> hasDescription(String description) {
+        return hasAttribute(commit -> commit.description, description);
+    }
+
     private <T> Matcher<Optional<Commit>> hasAttribute(Function<Commit, T> attribute, T value) {
         return new TypeSafeMatcher<Optional<Commit>>() {
             @Override
@@ -86,8 +108,8 @@ public class ConventionalCommitTest {
             }
 
             @Override
-            protected void describeMismatchSafely(Optional<Commit> foo, Description description) {
-                description.appendText("was ").appendValue(foo);
+            protected void describeMismatchSafely(Optional<Commit> commit, Description description) {
+                description.appendText("was ").appendValue(commit.map(attribute));
             }
 
             @Override

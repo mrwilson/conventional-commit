@@ -14,13 +14,9 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
             Type(),
             Optional(Scope()),
             Delimiter(),
-            Sequence(
-                NoneOf(" "),
-                ZeroOrMore(ANY)
-            )
+            Description()
         );
     }
-
 
     Rule Type() {
         return Sequence(
@@ -31,16 +27,26 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
         );
     }
 
+    Rule Scope() {
+        return Sequence(
+                Ch('('),
+                OneOrMore(NoneOf(")")),
+                push(pop().scope(match())),
+                Ch(')')
+        );
+    }
+
     Rule Delimiter() {
         return String(": ");
     }
 
-    Rule Scope() {
+    Rule Description() {
         return Sequence(
-            Ch('('),
-            OneOrMore(NoneOf(")")),
-            push(pop().scope(match())),
-            Ch(')')
+            Sequence(
+                NoneOf(" "),
+                ZeroOrMore(ANY)
+            ),
+            push(pop().description(match()))
         );
     }
 }
