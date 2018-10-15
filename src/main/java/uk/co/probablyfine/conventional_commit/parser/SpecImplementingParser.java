@@ -9,6 +9,9 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
 
     public Rule Commit() {
         return Sequence(
+            // Initialise stack with empty builder.
+
+            push(builder()),
 
             // <type>[optional scope]: <description>
 
@@ -48,7 +51,7 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
             OneOrMore(
                 CharRange('A', 'z')
             ),
-            push(builder().type(match()))
+            push(pop().type(match()))
         );
     }
 
