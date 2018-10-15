@@ -9,18 +9,29 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
 
     public Rule Commit() {
         return Sequence(
-            Type(),
-            Optional(Scope()),
-            Delimiter(),
-            Description(),
-            Optional(Body()),
-            EOI
+
+            // <type>[optional scope]: <description>
+
+            Type(), Optional(Scope()), Delimiter(), Description(),
+
+            // [optional body]
+
+            FirstOf(
+                EOI,
+                Sequence(
+                    NewLine(), EOI
+                ),
+                Sequence(
+                    NewLine(), NewLine(),
+                    Body(),
+                    EOI
+                )
+            )
         );
     }
 
     Rule Body() {
         return Sequence(
-            NewLine(), NewLine(),
             OneOrMore(
                 ANY
             ),

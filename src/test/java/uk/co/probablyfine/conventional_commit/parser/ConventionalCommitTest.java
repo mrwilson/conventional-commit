@@ -71,6 +71,16 @@ public class ConventionalCommitTest {
     }
 
     @Test
+    public void shouldSupportTrailingNewlineIfNoBodyOrFooter() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "chore: Add newlines to commit messages\n"
+        );
+
+        assertThat(commit, hasType("chore"));
+        assertThat(commit, hasDescription("Add newlines to commit messages"));
+    }
+
+    @Test
     public void shouldExtractBodyFromCommit_RequireNewLineSeparator() {
         Optional<Commit> commit = ConventionalCommit.parse(
             "fix(widget): Widgets are broken\nThis was due to the wotsit being old and rusty"
