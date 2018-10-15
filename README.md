@@ -7,11 +7,16 @@ A small java library to parse [Conventional Commits](https://www.conventionalcom
 ## API
 
 ```java
-Optional<Commit> commit = ConventionalCommit.parse("feat(widget): Add thingy to widget");
+Optional<Commit> commit = ConventionalCommit.parse(
+    "feat(widget): Add thingy to widget\n\nWidgets now work with sprockets"
+);
 
 commit.isPresent(); // true
-commit.type; // "feat"
-commit.scope; // "widget"
+
+commit.type;        // "feat"
+commit.scope;       // "widget"
+commit.description  // "Add thingy to widget"
+commit.body;        // "Widgets now work with sprockets"
 ```
 
 ## Building
