@@ -17,28 +17,47 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
 
             Type(), Optional(Scope()), Delimiter(), Description(),
 
-            // [optional body]
 
             FirstOf(
-                EOI,
+                // [optional body]
+                // [optional footer]
+                Sequence(
+                    SectionSeparator(),
+                    Body(),
+                    SectionSeparator(),
+                    Footer(),
+                    Optional(NewLine()),
+                    EOI
+                ),
+
+                // [optional body]
+                Sequence(
+                    SectionSeparator(),
+                    Body(),
+                    EOI
+                ),
+
+
                 Sequence(
                     NewLine(), EOI
                 ),
-                Sequence(
-                    NewLine(), NewLine(),
-                    Body(),
-                    EOI
-                )
+                EOI
             )
         );
     }
 
+
     Rule Body() {
         return Sequence(
-            OneOrMore(
-                ANY
-            ),
+            MultipleLinesOfText(),
             push(pop().body(match()))
+        );
+    }
+
+    Rule Footer() {
+        return Sequence(
+            MultipleLinesOfText(),
+            push(pop().footer(match()))
         );
     }
 
@@ -77,6 +96,21 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
                 )
             ),
             push(pop().description(match()))
+        );
+    }
+
+    Rule MultipleLinesOfText() {
+        return Sequence(
+            OneOrMore(NoneOf("\n")),
+            ZeroOrMore(
+                NewLine(), OneOrMore(NoneOf("\n"))
+            )
+        );
+    }
+
+    Rule SectionSeparator() {
+        return Sequence(
+            NewLine(), NewLine()
         );
     }
 }

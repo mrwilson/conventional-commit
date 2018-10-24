@@ -5,6 +5,7 @@ class CommitBuilder {
     private String scope;
     private String description;
     private String body;
+    private String footer;
 
     private CommitBuilder() {}
 
@@ -32,7 +33,14 @@ class CommitBuilder {
         return this;
     }
 
-    Commit build() {
-        return new Commit(this.type, this.scope, this.description, this.body);
+    CommitBuilder footer(String footer) {
+        this.footer = footer;
+        return this;
     }
+
+    Commit build() {
+        return new Commit(this.type, this.scope, this.description, this.body, this.footer);
+    }
+
+
 }

@@ -110,7 +110,7 @@ public class ConventionalCommitTest {
     @Test
     public void shouldNotParseCommitsWithNoDescription() {
         Optional<Commit> commit = ConventionalCommit.parse(
-                "feat(foo): "
+            "feat(foo): "
         );
 
         assertFalse(commit.isPresent());
@@ -119,10 +119,51 @@ public class ConventionalCommitTest {
     @Test
     public void shouldNotParseCommitsWithNoDescriptionAndTrailingWhitespace() {
         Optional<Commit> commit = ConventionalCommit.parse(
-                "feat(foo):  "
+            "feat(foo):  "
         );
 
         assertFalse(commit.isPresent());
+    }
+
+    @Test
+    public void shouldParseFooterIfBodyIsPresent() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "fix(widget): Add grease\n\nThe widget was grinding against the sprockets\n\nFixes #13"
+        );
+
+        assertThat(commit, hasType("fix"));
+        assertThat(commit, hasScope("widget"));
+        assertThat(commit, hasDescription("Add grease"));
+        assertThat(commit, hasBody("The widget was grinding against the sprockets"));
+        assertThat(commit, hasFooter("Fixes #13"));
+    }
+
+    @Test
+    public void shouldParseMultiLineFooterAndMultiLineBodyIsPresent() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+            "fix(widget): Add grease\n\n" +
+                "The widget was grinding against the sprockets\nGrease addresses the problem\n\n" +
+                "Fixes #13\nCo-Authored-By: Bilbo Baggins <bb@bag-end.theshire.me>"
+        );
+
+        assertThat(commit, hasType("fix"));
+        assertThat(commit, hasScope("widget"));
+        assertThat(commit, hasDescription("Add grease"));
+        assertThat(commit, hasBody("The widget was grinding against the sprockets\nGrease addresses the problem"));
+        assertThat(commit, hasFooter("Fixes #13\nCo-Authored-By: Bilbo Baggins <bb@bag-end.theshire.me>"));
+    }
+
+    @Test
+    public void shouldParseTrailingNewLineFromCommitFooter() {
+        Optional<Commit> commit = ConventionalCommit.parse(
+                "fix(widget): Add grease\n\nThe widget was grinding against the sprockets\n\nFixes #13\n"
+        );
+
+        assertThat(commit, hasType("fix"));
+        assertThat(commit, hasScope("widget"));
+        assertThat(commit, hasDescription("Add grease"));
+        assertThat(commit, hasBody("The widget was grinding against the sprockets"));
+        assertThat(commit, hasFooter("Fixes #13"));
     }
 
     private Matcher<Optional<Commit>> hasType(String type) {
@@ -139,6 +180,10 @@ public class ConventionalCommitTest {
 
     private Matcher<Optional<Commit>> hasBody(String body) {
         return hasAttribute(commit -> commit.body, body);
+    }
+
+    private Matcher<Optional<Commit>> hasFooter(String body) {
+        return hasAttribute(commit -> commit.footer, body);
     }
 
     private <T> Matcher<Optional<Commit>> hasAttribute(Function<Commit, T> attribute, T value) {
