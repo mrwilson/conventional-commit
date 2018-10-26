@@ -17,8 +17,8 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
 
             Type(), Optional(Scope()), Delimiter(), Description(),
 
-
             FirstOf(
+
                 // [optional body]
                 // [optional footer]
                 Sequence(
@@ -34,31 +34,25 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
                 Sequence(
                     SectionSeparator(),
                     Body(),
+                    Optional(NewLine()),
                     EOI
                 ),
 
-
+                // No body or footer
                 Sequence(
-                    NewLine(), EOI
-                ),
-                EOI
+                    Optional(NewLine()),
+                    EOI
+                )
             )
         );
     }
 
-
     Rule Body() {
-        return Sequence(
-            MultipleLinesOfText(),
-            push(pop().body(match()))
-        );
+        return MultipleLinesOfText(CommitBuilder::body);
     }
 
     Rule Footer() {
-        return Sequence(
-            MultipleLinesOfText(),
-            push(pop().footer(match()))
-        );
+        return MultipleLinesOfText(CommitBuilder::footer);
     }
 
     Rule NewLine() {
@@ -91,26 +85,35 @@ public class SpecImplementingParser extends BaseParser<CommitBuilder> {
         return Sequence(
             Sequence(
                 NoneOf(" "),
-                ZeroOrMore(
-                    NoneOf("\n")
-                )
+                LineOfText()
             ),
             push(pop().description(match()))
         );
     }
 
-    Rule MultipleLinesOfText() {
+    Rule MultipleLinesOfText(AddFieldToBuilder dataLoader) {
         return Sequence(
-            OneOrMore(NoneOf("\n")),
-            ZeroOrMore(
-                NewLine(), OneOrMore(NoneOf("\n"))
-            )
+            Sequence(
+                LineOfText(),
+                ZeroOrMore(
+                    NewLine(), LineOfText()
+                )
+            ),
+            push(dataLoader.add(pop(), match()))
         );
+    }
+
+    Rule LineOfText() {
+        return OneOrMore(NoneOf("\n"));
     }
 
     Rule SectionSeparator() {
         return Sequence(
             NewLine(), NewLine()
         );
+    }
+
+    interface AddFieldToBuilder {
+        CommitBuilder add(CommitBuilder builder, String value);
     }
 }
