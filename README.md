@@ -8,7 +8,7 @@ A small java library to parse [Conventional Commits](https://www.conventionalcom
 
 ```java
 Optional<Commit> commit = ConventionalCommit.parse(
-    "feat(widget): Add thingy to widget\n\nWidgets now work with sprockets"
+    "feat(widget): Add thingy to widget\n\nWidgets now work with sprockets\n\nFixes #13"
 );
 
 commit.isPresent(); // true
@@ -17,6 +17,7 @@ commit.type;        // "feat"
 commit.scope;       // "widget"
 commit.description  // "Add thingy to widget"
 commit.body;        // "Widgets now work with sprockets"
+commit.footer;      // "Fixes #13"
 ```
 
 ## Building
